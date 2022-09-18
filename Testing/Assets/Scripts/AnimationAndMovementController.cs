@@ -36,9 +36,11 @@ public class AnimationAndMovementController : MonoBehaviour
     bool isJumpPressed = false;
     Vector3 playerVelocity;
     float jumpingVelocity;
-    float jumpHeight = 1.0f;
-    float maxJumpTime =3f;
-   
+    float initialJumpingVelocity;
+    float jumpHeight = 3.0f;
+    float maxJumpHeight = 4.0f;
+    float maxJumpTime = 1f;
+
 
 
     private void Awake()
@@ -61,15 +63,14 @@ public class AnimationAndMovementController : MonoBehaviour
         //jump
         playerInput.CharacterControls.Jump.started += onJump;      
         playerInput.CharacterControls.Jump.canceled += onJump;
-        setupJumpVaribales();
-
+        //setupJumpVaribales();
     }
 
     void setupJumpVaribales()
     {
-        //float timeToApex = maxJumpTime / 2;
-        //gravity = (-2 * maxJumpheight) / Mathf.Pow(timeToApex, 2);
-        //initialjumpingVelocity = (2 * maxJumpTime) / timeToApex; //watch building a better jump GDC
+        float timeToApex = maxJumpTime / 2;
+        gravity = (-2 * maxJumpHeight) / Mathf.Pow(timeToApex, 2);
+        initialJumpingVelocity = (2 * maxJumpTime) / timeToApex; //watch building a better jump GDC
     }
     void onJump(InputAction.CallbackContext context)
     {
@@ -88,10 +89,7 @@ public class AnimationAndMovementController : MonoBehaviour
         currentMovement.y = 0f;
         currentRunMovement.y = 0f;
         isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
-        if (characterController.isGrounded && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0f;
-        }
+       
     }
     void onRun(InputAction.CallbackContext context)
     {
@@ -107,14 +105,25 @@ public class AnimationAndMovementController : MonoBehaviour
         
         if (!isJumping && characterController.isGrounded && isJumpPressed)
         {
-            print("hi");
+            
             isJumping = true;
-            //currentMovement.y = initialjumpingVelocity * .5f;
-            //currentRunMovement.y = initialjumpingVelocity * .5f;
+            //currentMovement.y = initialJumpingVelocity * .5f;
+            //currentRunMovement.y = initialJumpingVelocity * .5f;
+
+
             jumpingVelocity = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
-            playerVelocity = currentMovementInput;
+            playerVelocity = currentMovement;
             playerVelocity.y = jumpingVelocity;
-            print("jump");
+
+            //playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            
+            
+            
+            
+            
+            //playerVelocity = currentMovement;
+            //playerVelocity.y = jumpingVelocity;
+            
         }
         else if (!isJumpPressed && isJumping && characterController.isGrounded)
         {
@@ -184,19 +193,26 @@ public class AnimationAndMovementController : MonoBehaviour
         //else if (isFalling)
         //{
         //    float previousYVelocity = currentMovement.y;
-        //    float newYVelocity = currentMovement.y + (gravity * fallMultiplier *  Time.deltaTime);
+        //    float newYVelocity = currentMovement.y + (gravity * fallMultiplier * Time.deltaTime);
         //    float nextYVelocity = Mathf.Max((previousYVelocity + newYVelocity) * 0.5f, -20.0f);
         //    currentMovement.y = nextYVelocity;
         //    currentRunMovement.y = nextYVelocity;
         //}
-        //else
-        //{
-        //    float previousYVelocity = currentMovement.y;
-        //    float newYVelocity = currentMovement.y + (gravity * Time.deltaTime);
-        //    float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
-        //    currentMovement.y = nextYVelocity;
-        //    currentRunMovement.y = nextYVelocity;
-        //}
+        else
+        {
+
+            currentMovement.y += gravity * Time.deltaTime;
+            currentRunMovement.y += gravity * Time.deltaTime;
+
+
+
+            //float previousYVelocity = currentMovement.y;
+            //float newYVelocity = currentMovement.y + (gravity * Time.deltaTime);
+            //float nextYVelocity = (previousYVelocity + newYVelocity) * 0.5f;
+            //currentMovement.y = nextYVelocity;
+            //currentRunMovement.y = nextYVelocity;
+
+        }
 
     }
     // Start is called before the first frame update
@@ -208,21 +224,30 @@ public class AnimationAndMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        print(characterController.isGrounded);
+        Vector3 movementvelocity;
+        if (characterController.isGrounded && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0;
+        }
+
         HandleRotation();
         HandleAnimation();
         if (isRunPressed)
         {
-            characterController.Move(currentRunMovement * Time.deltaTime);
-            
+
+            movementvelocity = currentRunMovement;
 
         }
         else
         {
-            characterController.Move(currentMovement * Time.deltaTime);
+            movementvelocity = currentMovement;
+
+            //characterController.Move(currentMovement * Time.deltaTime);
 
         }
-        playerVelocity.y += groundedGravity * Time.deltaTime;
+        
+        characterController.Move(movementvelocity * Time.deltaTime);
+        playerVelocity.y += gravity * Time.deltaTime;
         characterController.Move(playerVelocity * Time.deltaTime);
         HandleGravity();
         HandleJump();
