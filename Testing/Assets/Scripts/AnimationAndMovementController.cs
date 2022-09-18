@@ -10,6 +10,7 @@ public class AnimationAndMovementController : MonoBehaviour
     Animator animator;
     PlayerInput playerInput;
     CharacterController characterController;
+    Transform cameraTransform;
 
     //parameter ids
     int isWalkingHash;
@@ -19,18 +20,25 @@ public class AnimationAndMovementController : MonoBehaviour
     //store values
     Vector2 currentMovementInput;
     Vector3 currentMovement;
-    Vector3 currentRunMovement;
+    Vector3 moveDirection;
+    //Vector3 currentRunMovement;
     bool isMovementPressed;
   
     private bool isRunPressed;
     //constant
     float rotationFactorPerFrame = 15f;
     private float runMultiper = 3.0f;
+    public float movementSpeed = 7f;
+    public float walkingspeed = 1.5f;
+    private float rotationSpeed = 15f;
+
+
+
 
     //gravitys
     float gravity = -9.81f;
     float groundedGravity = -.05f;
-
+    Vector3 movementVelocity;
     //jumping
     bool isJumping = false;
     bool isJumpPressed = false;
@@ -40,8 +48,7 @@ public class AnimationAndMovementController : MonoBehaviour
     float jumpHeight = 3.0f;
     float maxJumpHeight = 4.0f;
     float maxJumpTime = 1f;
-
-
+    
 
     private void Awake()
     {
@@ -49,6 +56,8 @@ public class AnimationAndMovementController : MonoBehaviour
         playerInput = new PlayerInput();
         animator = GetComponent<Animator>();
         characterController = GetComponent<CharacterController>();
+        cameraTransform = Camera.main.transform;
+
         //stringtohaash
         isWalkingHash = Animator.StringToHash("isWalking");
         isRunningHash = Animator.StringToHash("isRunning");
@@ -79,25 +88,58 @@ public class AnimationAndMovementController : MonoBehaviour
     void OnMovementInput(InputAction.CallbackContext context)
     {
         //handles movement inputs
-        currentMovementInput = context.ReadValue<Vector2>();
-        currentMovement.x = currentMovementInput.x;
+        currentMovementInput = context.ReadValue<Vector2>(); //read values of inputs
+        currentMovement.x = currentMovementInput.x; //stores the vector 2 inputs in a vector 3
         currentMovement.z = currentMovementInput.y;
+        HandleMovement();
         //currentMovement.y = 0f;
         //currentRunMovement.y = 0f;
-        currentRunMovement.x = currentMovementInput.x * runMultiper;
-        currentRunMovement.z = currentMovementInput.y * runMultiper;
-        currentMovement.y = 0f;
-        currentRunMovement.y = 0f;
-        isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0;
+        isMovementPressed = currentMovementInput.x != 0 || currentMovementInput.y != 0; //how to tell if the player is moving
        
     }
     void onRun(InputAction.CallbackContext context)
     {
         if (animator.GetBool(isWalkingHash) == false)
         {
+            isRunPressed = false; //button cant be true unless walking
             return;
         }
-        isRunPressed = context.ReadValueAsButton();
+        else
+        {
+            isRunPressed = context.ReadValueAsButton();
+        }
+      
+    }
+    void HandleMovement()
+    {
+        if (characterController.isGrounded && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0f;
+        }
+
+        Vector3 moveDirection = new Vector3(currentMovementInput.x, 0, currentMovementInput.y); // putector3 moveDirection = new Vector3(currentMovement.x, 0, currentMovement.z);
+        moveDirection = moveDirection.x * cameraTransform.right.normalized + moveDirection.z * cameraTransform.forward.normalized;
+        moveDirection.y = 0f; //weird interactions if the y isnt set the 0 the character doesnt move on the Y axis so its set to zero
+        Vector3 movemenVelocity = moveDirection;
+        if (isRunPressed)
+        {
+
+            movementVelocity = moveDirection * movementSpeed;
+
+        }
+        else
+        {
+            isRunPressed = false;
+            movementVelocity = moveDirection * walkingspeed;
+
+            //characterController.Move(currentMovement * Time.deltaTime);
+
+        }
+
+        characterController.Move(movementVelocity * Time.deltaTime);
+        playerVelocity.y += gravity * Time.deltaTime;
+        characterController.Move(playerVelocity * Time.deltaTime);
+
     }
     void HandleJump()
     {
@@ -107,45 +149,52 @@ public class AnimationAndMovementController : MonoBehaviour
         {
             
             isJumping = true;
-            //currentMovement.y = initialJumpingVelocity * .5f;
-            //currentRunMovement.y = initialJumpingVelocity * .5f;
-
-
             jumpingVelocity = Mathf.Sqrt(jumpHeight * -3.0f * gravity);
-            playerVelocity = currentMovement;
+            playerVelocity = moveDirection;
             playerVelocity.y = jumpingVelocity;
-
-            //playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
-            
-            
-            
-            
-            
-            //playerVelocity = currentMovement;
-            //playerVelocity.y = jumpingVelocity;
             
         }
         else if (!isJumpPressed && isJumping && characterController.isGrounded)
         {
             isJumping = false;
         }
-        //else if (!isJumpPressed && isJumping && characterController.isGrounded)
-        //{
-        //    isJumping = false;
-        //}
+       
     }
 
     void HandleRotation()
     {
-        Vector3 positionToLookAt; //where the player is moving next
-        //we only rotate on the x n z so no y is needed
-        positionToLookAt.x = currentMovement.x;
-        positionToLookAt.y = 0.0f;
-        positionToLookAt.z = currentMovement.z;
-        //current rotation
-        Quaternion currentRotation = transform.rotation;
-        Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
-        transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
+
+        //if (currentMovementInput != Vector2.zero)
+        ////{
+        //    float tartgetAngle = cameraTransform.eulerAngles.y; // current y rotation of the camera;
+        //    Quaternion targetRotation = Quaternion.Euler(0, tartgetAngle, 0); //turns it into a quaternion
+        //    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        //}
+        if (currentMovementInput != Vector2.zero)
+        {
+
+            float targetAngle = Mathf.Atan2(currentMovementInput.x, currentMovementInput.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            Quaternion rotation= Quaternion.Euler(0f, targetAngle, 0f);
+
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+
+
+
+        }
+
+
+
+
+        //Vector3 positionToLookAt; //where the player is moving next
+        //                          //we only rotate on the x n z so no y is needed
+        //positionToLookAt = currentMovement;
+        //positionToLookAt.y = 0f;
+        ////current rotation
+        //Quaternion currentRotation = transform.rotation;
+        //Quaternion targetRotation = Quaternion.LookRotation(positionToLookAt);
+        //transform.rotation = Quaternion.Slerp(currentRotation, targetRotation, rotationFactorPerFrame * Time.deltaTime);
 
     }
     void HandleAnimation()
@@ -185,8 +234,8 @@ public class AnimationAndMovementController : MonoBehaviour
         if (characterController.isGrounded)
         {
           
-            currentMovement.y = groundedGravity;
-            currentRunMovement.y = groundedGravity;
+            moveDirection.y = groundedGravity;
+            //currentRunMovement.y = groundedGravity;
 
                
         }
@@ -201,8 +250,8 @@ public class AnimationAndMovementController : MonoBehaviour
         else
         {
 
-            currentMovement.y += gravity * Time.deltaTime;
-            currentRunMovement.y += gravity * Time.deltaTime;
+            moveDirection.y += gravity * Time.deltaTime;
+            //currentRunMovement.y += gravity * Time.deltaTime;
 
 
 
@@ -224,31 +273,11 @@ public class AnimationAndMovementController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Vector3 movementvelocity;
-        if (characterController.isGrounded && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0;
-        }
-
+       
+        HandleMovement();
         HandleRotation();
         HandleAnimation();
-        if (isRunPressed)
-        {
-
-            movementvelocity = currentRunMovement;
-
-        }
-        else
-        {
-            movementvelocity = currentMovement;
-
-            //characterController.Move(currentMovement * Time.deltaTime);
-
-        }
-        
-        characterController.Move(movementvelocity * Time.deltaTime);
-        playerVelocity.y += gravity * Time.deltaTime;
-        characterController.Move(playerVelocity * Time.deltaTime);
+       
         HandleGravity();
         HandleJump();
     }

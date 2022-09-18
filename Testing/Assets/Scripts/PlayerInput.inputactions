@@ -3,12 +3,12 @@
     "maps": [
         {
             "name": "CharacterControls",
-            "id": "1b309343-e199-40eb-b453-7c6384476298",
+            "id": "5af4e393-ba50-44ea-88cb-ed8d083491d1",
             "actions": [
                 {
                     "name": "Move",
-                    "type": "Value",
-                    "id": "b2022258-e8f8-436d-a0c5-023534ac41dd",
+                    "type": "PassThrough",
+                    "id": "4b92bb69-dcfe-4ccf-be72-b8bb04a47d63",
                     "expectedControlType": "Vector2",
                     "processors": "NormalizeVector2",
                     "interactions": "",
@@ -17,26 +17,35 @@
                 {
                     "name": "Run",
                     "type": "Button",
-                    "id": "8d3658d3-8b90-4394-a2b7-44635cea708f",
+                    "id": "6f378c4b-8dae-4290-9eac-739fa6b411ab",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "7793ceb5-7e6b-4dba-b1b2-95c438b4568c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Jump",
-                    "type": "Button",
-                    "id": "14106c40-27c5-45c3-88b8-ab3072d95dd1",
-                    "expectedControlType": "Button",
+                    "name": "Look",
+                    "type": "Value",
+                    "id": "0bd68d60-648d-420b-9b1c-9ebcd876a8d1",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": "",
-                    "initialStateCheck": false
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
                 {
                     "name": "2D Vector",
-                    "id": "1f32c989-0964-4f51-bf73-0552fe695578",
+                    "id": "00311a9e-e84b-467e-bb4d-248a1f25aea7",
                     "path": "2DVector",
                     "interactions": "",
                     "processors": "",
@@ -47,7 +56,7 @@
                 },
                 {
                     "name": "up",
-                    "id": "6a4c91ca-cdb9-4a7e-8e48-8697dc66b407",
+                    "id": "5c3c52e9-fd4c-48f7-bc92-06030d1daa35",
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
@@ -58,7 +67,7 @@
                 },
                 {
                     "name": "down",
-                    "id": "1ba4fdfc-e383-4d43-872e-beb5c744d7a8",
+                    "id": "aa25372d-c5c2-41fb-8445-3a90527e62b3",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
@@ -69,7 +78,7 @@
                 },
                 {
                     "name": "left",
-                    "id": "2c71b19f-b8c2-4f17-a439-3df958018042",
+                    "id": "6cba2e63-16e6-4366-b8ed-0bfc1f2de71d",
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
@@ -80,7 +89,7 @@
                 },
                 {
                     "name": "right",
-                    "id": "456460fa-59dd-4b04-b5f0-cb591e0ac816",
+                    "id": "31a661fa-1152-49a1-a355-1c46fadb43ac",
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
@@ -91,7 +100,7 @@
                 },
                 {
                     "name": "",
-                    "id": "b3052538-295a-45db-9e54-a53a8a74f753",
+                    "id": "ddce91ba-65c8-4329-9135-ba1b355f51fd",
                     "path": "<Keyboard>/leftShift",
                     "interactions": "",
                     "processors": "",
@@ -102,12 +111,23 @@
                 },
                 {
                     "name": "",
-                    "id": "1ed1b8d1-5582-4673-a792-797d097fc10c",
+                    "id": "91bd3ea4-27cc-474c-94e8-3b0d65c91da1",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "1bf77e86-7dde-4d72-992d-169f06731695",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Look",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
