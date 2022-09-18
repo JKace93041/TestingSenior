@@ -15,6 +15,8 @@ public class AnimationAndMovementController : MonoBehaviour
     //parameter ids
     int isWalkingHash;
     int isRunningHash;
+    int horizontalHash;
+    int verticalHash;
 
 
     //store values
@@ -22,8 +24,10 @@ public class AnimationAndMovementController : MonoBehaviour
     Vector3 currentMovement;
     Vector3 moveDirection;
     //Vector3 currentRunMovement;
+   
+    
+    //IsPressedBools
     bool isMovementPressed;
-  
     private bool isRunPressed;
     //constant
     float rotationFactorPerFrame = 15f;
@@ -33,6 +37,11 @@ public class AnimationAndMovementController : MonoBehaviour
     private float rotationSpeed = 15f;
 
 
+    //animation blends
+    public Vector2 currentAnimationBlendVector;
+    public Vector2 animationVelocity;
+    private float animationSmoothTime = .1f;
+    public float animationPlayTransition = .15f;
 
 
     //gravitys
@@ -48,7 +57,7 @@ public class AnimationAndMovementController : MonoBehaviour
     float jumpHeight = 3.0f;
     float maxJumpHeight = 4.0f;
     float maxJumpTime = 1f;
-    
+   
 
     private void Awake()
     {
@@ -61,6 +70,8 @@ public class AnimationAndMovementController : MonoBehaviour
         //stringtohaash
         isWalkingHash = Animator.StringToHash("isWalking");
         isRunningHash = Animator.StringToHash("isRunning");
+        horizontalHash = Animator.StringToHash("Horizontal");
+        verticalHash = Animator.StringToHash("Vertical");
 
         //movement
         playerInput.CharacterControls.Move.started += OnMovementInput;
@@ -173,12 +184,15 @@ public class AnimationAndMovementController : MonoBehaviour
         //}
         if (currentMovementInput != Vector2.zero)
         {
-
-            float targetAngle = Mathf.Atan2(currentMovementInput.x, currentMovementInput.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            Quaternion rotation= Quaternion.Euler(0f, targetAngle, 0f);
+            Quaternion targetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
 
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            //float targetAngle = Mathf.Atan2(currentMovementInput.x, currentMovementInput.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            //Quaternion rotation= Quaternion.Euler(0f, targetAngle, 0f);
+
+
+            //transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
 
 
 
@@ -264,6 +278,16 @@ public class AnimationAndMovementController : MonoBehaviour
         }
 
     }
+    public void ControlAnimatorValues()
+    {
+
+        //Animation snap will force either the walk or running
+     
+        currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, currentMovementInput, ref animationVelocity, animationSmoothTime);
+        animator.SetFloat(horizontalHash, currentAnimationBlendVector.x);
+        animator.SetFloat(verticalHash, currentAnimationBlendVector.y);
+
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -277,7 +301,7 @@ public class AnimationAndMovementController : MonoBehaviour
         HandleMovement();
         HandleRotation();
         HandleAnimation();
-       
+        ControlAnimatorValues();
         HandleGravity();
         HandleJump();
     }
