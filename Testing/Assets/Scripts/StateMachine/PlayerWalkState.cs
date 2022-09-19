@@ -20,21 +20,29 @@ public class PlayerWalkState : PlayerBaseState
     }
     public override void UpdateState() 
     {
+        
         CheckSwitchState();
-        _ctx._moveDirectionX = _ctx._CurrentMovementInput.x;
-        _ctx._moveDirectionZ = _ctx._CurrentMovementInput.y;
+        _ctx._moveDirectionX = _ctx._currentMovementInput.x;
+        _ctx._moveDirectionZ = _ctx._currentMovementInput.y;
         //_ctx._moveDirectionY = 0f;
         _ctx._movementVelocity = _ctx._moveDirectionX * _ctx._cameraTransform.right.normalized + _ctx._moveDirectionZ * _ctx._cameraTransform.forward.normalized;
         _ctx._movementVelocity = _ctx._walkingSpeed * _ctx._movementVelocity;
         //_ctx._movementVelocity = _ctx._moveDirectionY + _ctx._movementVelocity;
-
+        Debug.Log("WalkState");
 
 
 
 
     }
 
-    public override void ExitState() { }
+    public override void ExitState() 
+    
+    
+    {
+        //_ctx._animator.SetBool(_ctx._isRunningHash, false);
+        //_ctx._animator.SetBool(_ctx._isWalkingHash, false);
+
+    }
 
     public override void CheckSwitchState() 
     {
@@ -68,6 +76,6 @@ public class PlayerWalkState : PlayerBaseState
     // Update is called once per frame
     void Update()
     {
-        
+       
     }
 }

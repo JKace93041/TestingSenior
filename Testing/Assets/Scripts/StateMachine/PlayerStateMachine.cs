@@ -110,7 +110,7 @@ public class PlayerStateMachine : MonoBehaviour
 
     public Vector3 _movementVelocity { get { return movementVelocity; }set { movementVelocity = value; } }
 
-    public Vector2 _CurrentMovementInput { get { return currentMovementInput; } }
+    //public Vector2 _CurrentMovementInput { get { return currentMovementInput; } }
 
 
 private void Awake()
@@ -176,15 +176,15 @@ private void Awake()
     }
     void onRun(InputAction.CallbackContext context)
     {
-        if (animator.GetBool(isWalkingHash) == false)
-        {
-            isRunPressed = false; //button cant be true unless walking
-            return;
-        }
-        else
-        {
+        //if (animator.GetBool(isWalkingHash) == false)
+        //{
+        //    isRunPressed = false; //button cant be true unless walking
+        //    return;
+        //}
+        //else
+        //{
             isRunPressed = context.ReadValueAsButton();
-        }
+        //}
 
     }
 
@@ -224,7 +224,7 @@ private void Awake()
 
         //Animation snap will force either the walk or running
 
-        currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, currentMovementInput, ref animationVelocity, animationSmoothTime);
+        currentAnimationBlendVector = Vector2.SmoothDamp(currentAnimationBlendVector, _currentMovementInput, ref animationVelocity, animationSmoothTime);
         animator.SetFloat(horizontalHash, currentAnimationBlendVector.x);
         animator.SetFloat(verticalHash, currentAnimationBlendVector.y);
 
@@ -282,6 +282,10 @@ private void Awake()
         HandleMovement();
         HandleRotation();
         ControlAnimatorValues();
+        print(_currentState);
+        print(_isMovementPressed);
+        Debug.Log("character controller is: "+ characterController.isGrounded);
+        Debug.Log(_moveDirectionZ + "  " + "  " + _moveDirectionX);
 
     }
     private void OnEnable()

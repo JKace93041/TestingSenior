@@ -42,7 +42,25 @@ public class PlayerJumpState : PlayerBaseState
     }
 
 
-    public override void InitializeSubState() { }
+    public override void InitializeSubState() 
+    {
+
+        if (!_ctx._isMovementPressed && !_ctx._isRunPressed)
+        {
+            SetSubStates(_factory.Idle());
+        }
+        else if (_ctx._isMovementPressed && !_ctx._isRunPressed)
+        {
+            SetSubStates(_factory.Walk());
+        }
+        else if (_ctx._isMovementPressed && _ctx._isRunPressed)
+        {
+            SetSubStates(_factory.Run());
+
+        }
+
+
+    }
     
     void HandleJump()
     {

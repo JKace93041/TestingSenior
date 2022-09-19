@@ -15,15 +15,22 @@ public class PlayerIdleState : PlayerBaseState
 
         _ctx._animator.SetBool(_ctx._isWalkingHash, false);
         _ctx._animator.SetBool(_ctx._isRunningHash, false);
-        _ctx._moveDirectionX = 0;
-        _ctx._moveDirectionZ = 0;
-
+        _ctx._moveDirectionZ = 0f;
+        _ctx._moveDirectionX = 0f;
+        if (_ctx._moveDirectionZ == 0f && _ctx._moveDirectionX == 0f)
+        {
+            _ctx._animator.SetBool(_ctx._isWalkingHash, false);
+            _ctx._animator.SetBool(_ctx._isRunningHash, false);
+        }
 
     }
     public override void UpdateState() 
     
     {
+        
         CheckSwitchState();
+        Debug.Log("IdleState");
+
 
     }
 
