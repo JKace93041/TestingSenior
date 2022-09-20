@@ -1,14 +1,11 @@
 fileFormatVersion: 2
-guid: e70f87529923f414d964f2ae1c81888b
+guid: d835318f90654474a89debeb901a47af
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable:
   - first:
       74: -203655887218126122
-    second: Fast Run (1)
-  - first:
-      74: -6426990253873337263
-    second: Fast Run
+    second: Jog Backward Diagonal
   externalObjects: {}
   materials:
     materialImportMode: 2
@@ -39,11 +36,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Fast Run
+      name: Jog Backward Diagonal
       takeName: mixamo.com
       internalID: 0
       firstFrame: 0
-      lastFrame: 16
+      lastFrame: 22
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
