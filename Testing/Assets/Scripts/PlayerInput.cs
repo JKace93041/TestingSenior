@@ -166,7 +166,7 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""6af9237e-f041-418c-9c08-9d169eef43db"",
                     ""path"": ""<Keyboard>/leftCtrl"",
-                    ""interactions"": ""Press"",
+                    ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Dodge"",

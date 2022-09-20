@@ -2,13 +2,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerStateMachine : MonoBehaviour
 {
 
+    private TextMeshProUGUI textMesh;
 
     //state variables
-    PlayerBaseState _currentState;
+    public PlayerBaseState _currentState;
     PlayerStateFactory  _states;
     
 
@@ -48,10 +50,12 @@ public class PlayerStateMachine : MonoBehaviour
     //isDoing
     bool isJumpingAnimating;
     bool requireNewJumpPress = false;
+    bool requireNewDodgePress = false;
+
     bool isJumping = false;
     bool isWalking;
     bool isRunning;
-    bool isDodgeing;
+    bool isDodgeing = false;
 
     //constant
     float rotationFactorPerFrame = 15f;
@@ -66,7 +70,7 @@ public class PlayerStateMachine : MonoBehaviour
     public Vector2 animationVelocity;
     private float animationSmoothTime = .1f;
     public float animationPlayTransition = .15f;
-
+    InputAction dodgeAction;
     //gravitys
     float gravity = -9.81f;
     float groundedGravity = -.05f;
@@ -84,13 +88,16 @@ public class PlayerStateMachine : MonoBehaviour
     public bool _isJumpPressed { get { return isJumpPressed; } }
     public bool _isMovementPressed { get { return isMovementPressed; } }
     public bool _isRunPressed { get { return isRunPressed; } }
-    
+
+    public bool _isDodgePressed { get { return isDodgePressed; } }
     public Animator _animator { get { return animator; } }
     public CharacterController _characterController { get { return characterController; } }
 
     public int _isJumpingHash { get { return isJumpingHash; } }
     public int _isWalkingHash { get { return isWalkingHash; } }
     public int _isRunningHash { get { return isRunningHash; } }
+    public int _IsDodgingHash { get { return isDodgeingHash; } }
+    public bool _isDodging { get { return isDodgeing; } set {  isDodgeing = value; } }
 
     public bool _isJumping { set { isJumping = value; } }
     public bool _requireNewJumpPress { get  { return requireNewJumpPress; } set { requireNewJumpPress = value; } }
@@ -107,6 +114,10 @@ public class PlayerStateMachine : MonoBehaviour
     public Vector2 _currentMovementInput { get { return currentMovementInput; } }
     public float _movementSpeed { get { return movementSpeed; } }
     public float _walkingSpeed { get { return walkingspeed; } }
+    public bool _requireNewDodgePress { get { return requireNewDodgePress; } set { requireNewDodgePress = value; } }
+
+    public InputAction _dodgeAction { get { return dodgeAction; } }
+    public int _dodgeAnimation { get { return dodgeAnimation; } }
 
     public Vector3 _movementVelocity { get { return movementVelocity; }set { movementVelocity = value; } }
 
@@ -115,6 +126,8 @@ public class PlayerStateMachine : MonoBehaviour
 
 private void Awake()
     {
+        textMesh = FindObjectOfType<TextMeshProUGUI>();
+
         //gets
         playerInput = new PlayerInput();
         animator = GetComponent<Animator>();
@@ -140,6 +153,8 @@ private void Awake()
         isDodgeingHash = Animator.StringToHash("isDodgeing");
         dodgeAnimation = Animator.StringToHash("Dodge");
 
+        dodgeAction = playerInput.CharacterControls.Dodge;
+
         //movement
         playerInput.CharacterControls.Move.started += OnMovementInput;
         playerInput.CharacterControls.Move.canceled += OnMovementInput;
@@ -151,8 +166,8 @@ private void Awake()
         playerInput.CharacterControls.Jump.started += onJump;      
         playerInput.CharacterControls.Jump.canceled += onJump;
         //dodge
-        //playerInput.CharacterControls.Dodge.started += onDodge;
-        //playerInput.CharacterControls.Dodge.canceled += onDodge;
+        playerInput.CharacterControls.Dodge.started += onDodge;
+        playerInput.CharacterControls.Dodge.canceled += onDodge;
 
         //setupJumpVaribales();
     }
@@ -185,6 +200,13 @@ private void Awake()
         //{
             isRunPressed = context.ReadValueAsButton();
         //}
+
+    }
+
+    void onDodge(InputAction.CallbackContext context)
+    {
+        isDodgePressed = context.ReadValueAsButton();
+        requireNewDodgePress = false;
 
     }
 
@@ -282,10 +304,12 @@ private void Awake()
         HandleMovement();
         HandleRotation();
         ControlAnimatorValues();
+        textMesh.SetText(_currentState.ToString());
         print(_currentState);
-        print(_isMovementPressed);
+        //print(_isMovementPressed);
         Debug.Log("character controller is: "+ characterController.isGrounded);
-        Debug.Log(_moveDirectionZ + "  " + "  " + _moveDirectionX);
+        //Debug.Log(animator.GetCurrentAnimatorStateInfo(0).fullPathHash);
+        //Debug.Log(_moveDirectionZ + "  " + "  " + _moveDirectionX);
 
     }
     private void OnEnable()

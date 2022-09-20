@@ -36,6 +36,10 @@ public class PlayerStateFactory
     {
         return new PlayerGroundState(_context, this);
     }
+    public PlayerDodgeState Dodge()
+    {
+        return new PlayerDodgeState(_context, this);
+    }
 
 
 

@@ -15,7 +15,7 @@ public class PlayerGroundState : PlayerBaseState
     {
         _ctx._moveDirectionY = _ctx._groundedGravity;
         _ctx._playerVelocityY = _ctx._groundedGravity;
-        Debug.Log("hello world");
+        //Debug.Log("hello world");
     }
     public override void UpdateState() 
     {
@@ -32,6 +32,11 @@ public class PlayerGroundState : PlayerBaseState
         {
             SwitchStates(_factory.Jump());
         }
+        
+        if (_ctx._characterController.isGrounded && _ctx._dodgeAction.triggered && !_ctx._requireNewDodgePress)
+        {
+            SwitchStates(_factory.Dodge());
+        }
     
     }
 
@@ -44,15 +49,31 @@ public class PlayerGroundState : PlayerBaseState
         {
             SetSubStates(_factory.Idle());
         }
-        else if (_ctx._isMovementPressed && !_ctx._isRunPressed)
+        if (!_ctx._isDodging)
         {
-            SetSubStates(_factory.Walk());
-        }
-        else if (_ctx._isMovementPressed && _ctx._isRunPressed)
-        {
-            SetSubStates(_factory.Run());
+            if (_ctx._isMovementPressed && !_ctx._isRunPressed)
+            {
+                SetSubStates(_factory.Walk());
+            }
+            else if (_ctx._isMovementPressed && _ctx._isRunPressed)
+            {
+                SetSubStates(_factory.Run());
 
+            }
         }
+        //} else if (_ctx._isMovementPressed && !_ctx._isRunPressed)
+        //{
+        //    SetSubStates(_factory.Walk());
+        //}
+        //else if (_ctx._isMovementPressed && _ctx._isRunPressed)
+        //{
+        //    SetSubStates(_factory.Run());
+
+        //}
+        //else if(_ctx._isDodgePressed)
+        //{
+        //    SetSubStates(_factory.Dodge());
+        //}
 
     }
     // Start is called before the first frame update

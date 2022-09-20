@@ -27,9 +27,9 @@ public class PlayerIdleState : PlayerBaseState
     public override void UpdateState() 
     
     {
-        
+
         CheckSwitchState();
-        Debug.Log("IdleState");
+        //Debug.Log("IdleState");
 
 
     }
@@ -48,6 +48,10 @@ public class PlayerIdleState : PlayerBaseState
         else if (_ctx._isMovementPressed)
         {
             SwitchStates(_factory.Walk());
+        }
+        else if (_ctx._isDodgePressed)
+        {
+            SwitchStates(_factory.Dodge());
         }
 
 

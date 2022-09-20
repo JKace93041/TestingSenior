@@ -130,7 +130,7 @@ public class AnimationAndMovementController : MonoBehaviour
     void onDodge(InputAction.CallbackContext context)
     {
         DodgeInput = true;
-            
+
     }
 
     void onJump(InputAction.CallbackContext context)
