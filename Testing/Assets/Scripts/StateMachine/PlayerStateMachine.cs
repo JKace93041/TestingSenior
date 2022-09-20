@@ -254,28 +254,37 @@ private void Awake()
     void HandleRotation()
     {
 
-        //if (currentMovementInput != Vector2.zero)
-        ////{
-        //    float tartgetAngle = cameraTransform.eulerAngles.y; // current y rotation of the camera;
-        //    Quaternion targetRotation = Quaternion.Euler(0, tartgetAngle, 0); //turns it into a quaternion
-        //    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-        //}
         if (currentMovementInput != Vector2.zero)
         {
-            Quaternion targetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
 
+            float targetAngle = Mathf.Atan2(currentMovementInput.x, currentMovementInput.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+            Quaternion rotation = Quaternion.Euler(0f, targetAngle, 0f);
+            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, Time.deltaTime * rotationSpeed);
 
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-            //float targetAngle = Mathf.Atan2(currentMovementInput.x, currentMovementInput.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
-            //Quaternion rotation= Quaternion.Euler(0f, targetAngle, 0f);
-
-
-            //transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
-
-
+            //
+            //
+            //
+            //   float tartgetAngle = cameraTransform.eulerAngles.y; // current y rotation of the camera;
+            //    Quaternion targetRotation = Quaternion.Euler(0, tartgetAngle, 0); //turns it into a quaternion
+            //    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
         }
+
+        //if (currentMovementInput != Vector2.zero)
+        //{
+        //    Quaternion targetRotation = Quaternion.Euler(0, cameraTransform.eulerAngles.y, 0);
+
+
+        //    transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        //    //float targetAngle = Mathf.Atan2(currentMovementInput.x, currentMovementInput.y) * Mathf.Rad2Deg + cameraTransform.eulerAngles.y;
+        //    //Quaternion rotation= Quaternion.Euler(0f, targetAngle, 0f);
+
+
+        //    //transform.rotation = Quaternion.Lerp(transform.rotation, rotation, rotationSpeed * Time.deltaTime);
+
+
+
+        //}
 
 
 
